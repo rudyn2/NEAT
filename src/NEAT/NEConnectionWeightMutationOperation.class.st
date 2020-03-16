@@ -6,12 +6,11 @@ Class {
 
 { #category : #'instance creation' }
 NEConnectionWeightMutationOperation >> on: anIndividual [
-	| c newWeight newTrace|
+	| c newWeight |
 	anIndividual connections ifEmpty: [ ^ self ].
 	c := (anIndividual connections atRandom: random).
 	newWeight := self randomWeight + c weight.
 	c weight: newWeight.
-	"anIndividual trace: { self class name . c . newWeight }"
-	newTrace := Dictionary newFrom: {#className -> self class name. #connection -> c. #newWeight -> newWeight }.
-	anIndividual trace: newTrace.
+	anIndividual trace: { self class name . c . newWeight }
+	
 ]

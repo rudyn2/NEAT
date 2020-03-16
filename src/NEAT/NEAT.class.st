@@ -191,7 +191,7 @@ NEAT >> initialize [
 	logs := OrderedCollection new.
 	numberOfGenerations := 10.
 	
-	self individualClass: NEOpTraceableIndividual.
+	self individualClass: NEIndividual.
 	
 	self speciationThreshold: 3.
 	self doUseElitism

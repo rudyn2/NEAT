@@ -7,7 +7,7 @@ Class {
 { #category : #'instance creation' }
 NEAddNodeMutationOperation >> on: anIndividual [
 	
-	| relevantConnections c connection1 connection2 newTrace|
+	| relevantConnections c connection1 connection2 |
 	relevantConnections := anIndividual connections select: #isEnabled.
 	relevantConnections ifEmpty: [ ^self ].
 	
@@ -20,7 +20,5 @@ NEAddNodeMutationOperation >> on: anIndividual [
 	connection2 := NEConnection new in: anIndividual numberOfNodesWithBias; out: c out; weight: c weight; makeEnabled; innovationNumber: InnovationNumber.
 	anIndividual addConnection: connection2.
 		
-	newTrace := Dictionary newFrom: {#className -> self class name. #connection1 -> connection1 . #connection2 -> connection2}.
-	anIndividual trace: newTrace.
-	
+	anIndividual trace: { self class name . c . connection1 . connection2 }
 ]
