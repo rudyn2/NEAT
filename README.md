@@ -20,7 +20,7 @@ Metacello new
     repository: 'github://ObjectProfile/Roassal2/src';
     load.
 Gofer new
-    url: 'github://rudyn2/NEAT/src';
+    url: 'github://bergel/NEAT/src';
     package: 'NEAT';
     load.
 ```
