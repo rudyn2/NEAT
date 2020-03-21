@@ -15,8 +15,7 @@ Class {
 		'numberOfGenerations',
 		'shouldUseElitism',
 		'speciationThreshold',
-		'individualClass',
-		'lastPopulation'
+		'individualClass'
 	],
 	#category : #'NEAT-Core'
 }
@@ -30,8 +29,7 @@ NEAT >> buildInitialPopulation [
 		i random: random.
 		numberOfInputs timesRepeat: [ i addInputNode ].
 		numberOfOutputs timesRepeat: [ i addOutputNode ].
-		i trace: (Dictionary newFrom: { #fitness -> nil }).
-		population add: i.
+		population add: i
 		]
 ]
 
@@ -79,7 +77,6 @@ NEAT >> doLog [
 	log maxFitness: (population collect: #fitness) max.
 	log averageFitness: ((population collect: #fitness) average asFloat round: 3).
 	log bestIndividual: self result.
-	log npWeightOperation: (self numberOfPositiveWeightOperations: population).
 	logs add: log.
 ]
 
@@ -179,11 +176,6 @@ NEAT >> individualClass: aClass [
 	individualClass := aClass
 ]
 
-{ #category : #'as yet unclassified' }
-NEAT >> initalizeTraces [
-	population do: [ :i | i trace: (Dictionary newFrom: { #fitness -> i fitness})]
-]
-
 { #category : #initialization }
 NEAT >> initialize [
 	super initialize.
@@ -238,22 +230,6 @@ NEAT >> numberOfOutputs [
 { #category : #accessing }
 NEAT >> numberOfOutputs: anObject [
 	numberOfOutputs := anObject
-]
-
-{ #category : #'as yet unclassified' }
-NEAT >> numberOfPositiveWeightOperations: aPopulation [
-	| result tempIndividual|
-	result := 0.
-	1 to: (aPopulation size) do: [ :n | 
-		tempIndividual := aPopulation at: n.
-		(tempIndividual trace size > 1) ifTrue: [ 
-			(tempIndividual trace last at: #fitness) > ((tempIndividual trace at: (tempIndividual trace size - 1)) at: #fitness) ifTrue: [ 
-				result := result + 1.
-				 ].
-			 ].
-		]. 
-	^ result.
-	
 ]
 
 { #category : #accessing }
@@ -339,7 +315,6 @@ NEAT >> runOneGeneration [
 			newPopulation add: newInd.
 			newInd computeFitness: fitness ].
 
-	lastPopulation := population.
 	population := newPopulation.
 	self doLog
 ]
