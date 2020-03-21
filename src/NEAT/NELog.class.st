@@ -7,7 +7,10 @@ Class {
 		'minFitness',
 		'maxFitness',
 		'averageFitness',
-		'bestIndividual'
+		'bestIndividual',
+		'npWeightOperation',
+		'nNeutralWeightOperation',
+		'nnWeightOperation'
 	],
 	#category : #'NEAT-Core'
 }
@@ -68,6 +71,42 @@ NELog >> minFitness [
 { #category : #accessing }
 NELog >> minFitness: anObject [
 	minFitness := anObject
+]
+
+{ #category : #accessing }
+NELog >> nNeutralWeightOperation [
+	"Number of individuals which its fitness has been worsed over last generation due to a connection weight operation."
+	^ nNeutralWeightOperation
+]
+
+{ #category : #accessing }
+NELog >> nNeutralWeightOperation: anObject [ 
+	"Number of individuals which its fitness has been worsed over last generation due to a connection weight operation."
+	nNeutralWeightOperation := anObject 
+]
+
+{ #category : #'as yet unclassified' }
+NELog >> nnWeightOperation [
+	"Number of individuals which its fitness has been worsed over last generation due to a connection weight operation (nn: negative number)."
+	^ nnWeightOperation
+]
+
+{ #category : #accessing }
+NELog >> nnWeightOperation: anObject [ 
+	"Number of individuals which its fitness has been worsed over last generation due to a connection weight operation (nn: negative number)."
+	nnWeightOperation := anObject
+]
+
+{ #category : #accessing }
+NELog >> npWeightOperation [
+	"Number of individuals which its fitness has been worsed over last generation due to a connection weight operation. (np: positive number)"
+	^ npWeightOperation
+]
+
+{ #category : #accessing }
+NELog >> npWeightOperation: anObject [
+	"Number of individuals which its fitness has been worsed over last generation due to a connection weight operation. (np: positive number)"
+	npWeightOperation := anObject 
 ]
 
 { #category : #'as yet unclassified' }

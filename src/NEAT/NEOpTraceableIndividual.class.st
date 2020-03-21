@@ -10,17 +10,7 @@ Class {
 { #category : #'as yet unclassified' }
 NEOpTraceableIndividual >> computeFitness: oneArgBlock [
 	super computeFitness: oneArgBlock.
-	operationsTrace isEmpty 
-		ifTrue: [ 
-			self trace: (Dictionary newFrom: {#fitness -> fitness. #improvement -> nil})
-		] 
-		ifFalse: [ 
-			|improvement lastFitness|.
-			lastFitness := (operationsTrace at: operationsTrace size - 1 ) at: #fitness.
-			improvement := fitness - lastFitness.
-			operationsTrace last at: #improvement put: improvement.
-			operationsTrace last at: #fitness put: fitness. 
-		]
+	operationsTrace last at: #fitness ifAbsentPut: fitness. 
 		
 ]
 
@@ -41,6 +31,11 @@ NEOpTraceableIndividual >> initialize [
 { #category : #initialization }
 NEOpTraceableIndividual >> setTrace: aTrace [
 	operationsTrace := aTrace
+]
+
+{ #category : #'as yet unclassified' }
+NEOpTraceableIndividual >> trace [ 
+	^ operationsTrace
 ]
 
 { #category : #initialization }
