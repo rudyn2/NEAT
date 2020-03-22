@@ -1,5 +1,5 @@
 Class {
-	#name : #NETrace,
+	#name : #NETraceItem,
 	#superclass : #Object,
 	#instVars : [
 		'fitness',
@@ -9,7 +9,7 @@ Class {
 }
 
 { #category : #copying }
-NETrace >> copy [
+NETraceItem >> copy [
 	| newTrace |
 	newTrace := self class new.
 	newTrace setFitness: self fitness.
@@ -18,21 +18,21 @@ NETrace >> copy [
 ]
 
 { #category : #accessing }
-NETrace >> fitness [
+NETraceItem >> fitness [
 	^ fitness 
 ]
 
 { #category : #accessing }
-NETrace >> operation [
+NETraceItem >> operation [
 	^ operation
 ]
 
 { #category : #initialization }
-NETrace >> setFitness: aFitness [
+NETraceItem >> setFitness: aFitness [
 	fitness := aFitness
 ]
 
 { #category : #initialization }
-NETrace >> setOperation: aClassName [
+NETraceItem >> setOperation: aClassName [
 	operation := aClassName
 ]

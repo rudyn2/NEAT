@@ -9,8 +9,11 @@ Class {
 
 { #category : #computing }
 NETraceableIndividual >> computeFitness: oneArgBlock [
+	| newTraceItem |
 	super computeFitness: oneArgBlock.
-	self trace setFitness: fitness.
+	newTraceItem := NETraceItem new.
+	newTraceItem setFitness: fitness .
+	self trace: newTraceItem.
 ]
 
 { #category : #computing }
@@ -23,20 +26,14 @@ NETraceableIndividual >> computeFitness: oneArgBlock trace: aTrace [
 NETraceableIndividual >> copy [
 	| result |
 	result := super copy.
-	result trace: trace copy.
+	result trace: (trace copy).
 	^ result
 ]
 
 { #category : #initialization }
 NETraceableIndividual >> initialize [
 	super initialize.
-	trace := NETrace new.
-]
-
-{ #category : #copying }
-NETraceableIndividual >> setTrace: aOperation fitness: aFitness [
-	self trace setOperation: aOperation.
-	self trace setFitness: aFitness.
+	trace := OrderedCollection new.
 ]
 
 { #category : #accessing }
@@ -45,6 +42,6 @@ NETraceableIndividual >> trace [
 ]
 
 { #category : #tracing }
-NETraceableIndividual >> trace: aTrace [
-	trace := aTrace.
+NETraceableIndividual >> trace: aNETrace [
+	trace add: aNETrace.
 ]
