@@ -321,7 +321,7 @@ NEAT >> runOneGeneration [
 					i addChildren: newInd ].
 
 			newTrace := NETrace new.
-			self doMutate: newInd.
+			self doMutate: newInd trace: newTrace.
 			newInd computeFitness: fitness trace: newTrace.
 			newInd trace: newTrace.
 			newPopulation add: newInd.

@@ -17,12 +17,12 @@ NEAbstractMutationOperation >> on: anIndividual [
 	self subclassResponsibility 
 ]
 
-{ #category : #'instance creation' }
+{ #category : #matching }
 NEAbstractMutationOperation >> performOn: anIndividual [
 	self assert: [ anIndividual random notNil ] description: 'Individual does not have a random number'.
 	random := anIndividual random.
 	anIndividual resetFitness.
-	self on: anIndividual 
+	self on: anIndividual.
 ]
 
 { #category : #'instance creation' }
