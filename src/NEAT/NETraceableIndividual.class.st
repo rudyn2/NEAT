@@ -7,32 +7,44 @@ Class {
 	#category : #'NEAT-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #computing }
 NETraceableIndividual >> computeFitness: oneArgBlock [
 	super computeFitness: oneArgBlock.
-	self trace: { #fitness . fitness }
+	self trace setFitness: fitness.
+]
+
+{ #category : #computing }
+NETraceableIndividual >> computeFitness: oneArgBlock trace: aTrace [
+	super computeFitness: oneArgBlock.
+	aTrace setFitness: fitness.
 ]
 
 { #category : #copying }
 NETraceableIndividual >> copy [
 	| result |
 	result := super copy.
-	result setTrace: trace copy.
+	result trace: trace copy.
 	^ result
 ]
 
 { #category : #initialization }
 NETraceableIndividual >> initialize [
 	super initialize.
-	self setTrace: OrderedCollection new
+	trace := NETrace new.
 ]
 
 { #category : #copying }
-NETraceableIndividual >> setTrace: aTrace [
-	trace := aTrace
+NETraceableIndividual >> setTrace: aOperation fitness: aFitness [
+	self trace setOperation: aOperation.
+	self trace setFitness: aFitness.
 ]
 
-{ #category : #copying }
-NETraceableIndividual >> trace: aTupple [
-	trace add: aTupple
+{ #category : #accessing }
+NETraceableIndividual >> trace [
+	^ trace
+]
+
+{ #category : #tracing }
+NETraceableIndividual >> trace: aTrace [
+	trace := aTrace.
 ]

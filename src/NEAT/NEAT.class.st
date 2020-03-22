@@ -89,6 +89,15 @@ NEAT >> doMutate: newInd [
 					ifTrue: [ cAssoc key random: random; performOn: newInd ] ] ]
 ]
 
+{ #category : #'as yet unclassified' }
+NEAT >> doMutate: newInd trace: newTrace [
+	config
+		do: [ :cAssoc | 
+			(cAssoc key isKindOf: NEAbstractMutationOperation) ifTrue: [
+				random next <= cAssoc value
+					ifTrue: [ cAssoc key random: random; performOn: newInd trace: newTrace] ] ]
+]
+
 { #category : #initialization }
 NEAT >> doNotUseElitism [
 	shouldUseElitism := false
@@ -191,7 +200,7 @@ NEAT >> initialize [
 	logs := OrderedCollection new.
 	numberOfGenerations := 10.
 	
-	self individualClass: NEIndividual.
+	self individualClass: NETraceableIndividual.
 	
 	self speciationThreshold: 3.
 	self doUseElitism
@@ -287,7 +296,7 @@ NEAT >> runFor: nbGen [
 
 { #category : #'as yet unclassified' }
 NEAT >> runOneGeneration [
-	| newPopulation ind1 ind2 newInd numberOfIndividualToCreate |
+	| newPopulation ind1 ind2 newInd newTrace numberOfIndividualToCreate |
 	self doSpeciation.
 	newPopulation := OrderedCollection new.
 	numberOfIndividualToCreate := (shouldUseElitism and: [ self currentGeneration > 1 ]) 
@@ -311,9 +320,12 @@ NEAT >> runOneGeneration [
 					newInd addParent: i.
 					i addChildren: newInd ].
 
+			newTrace := NETrace new.
 			self doMutate: newInd.
+			newInd computeFitness: fitness trace: newTrace.
+			newInd trace: newTrace.
 			newPopulation add: newInd.
-			newInd computeFitness: fitness ].
+			].
 
 	population := newPopulation.
 	self doLog
