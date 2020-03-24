@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'fitness',
-		'operation'
+		'operation',
+		'crossover'
 	],
 	#category : #'NEAT-Core'
 }
@@ -18,6 +19,11 @@ NETraceItem >> copy [
 ]
 
 { #category : #accessing }
+NETraceItem >> crossover [
+	^ crossover
+]
+
+{ #category : #accessing }
 NETraceItem >> fitness [
 	^ fitness 
 ]
@@ -25,6 +31,11 @@ NETraceItem >> fitness [
 { #category : #accessing }
 NETraceItem >> operation [
 	^ operation
+]
+
+{ #category : #initialization }
+NETraceItem >> setCrossover: aClassName [
+	crossover := aClassName.
 ]
 
 { #category : #initialization }

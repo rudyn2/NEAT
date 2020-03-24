@@ -26,7 +26,7 @@ NETraceableIndividual >> computeFitness: oneArgBlock trace: aTrace [
 NETraceableIndividual >> copy [
 	| result |
 	result := super copy.
-	result trace: (trace copy).
+	result replaceTrace: (trace copy).
 	^ result
 ]
 
@@ -34,6 +34,11 @@ NETraceableIndividual >> copy [
 NETraceableIndividual >> initialize [
 	super initialize.
 	trace := OrderedCollection new.
+]
+
+{ #category : #'as yet unclassified' }
+NETraceableIndividual >> replaceTrace: anArray [
+	trace := anArray
 ]
 
 { #category : #accessing }

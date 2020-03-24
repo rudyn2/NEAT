@@ -305,11 +305,13 @@ NEAT >> runOneGeneration [
 	numberOfIndividualToCreate
 		timesRepeat: [ 
 			"The following lines use the crossover"
+			newTrace := NETraceItem new.
 			random next <= self crossoverRate
 				ifTrue: [
 					ind1 := self selectIndividual.
 					ind2 := self selectIndividual: ind1 species individuals.
 					newInd := self crossoverBetween: ind1 and: ind2.
+					newTrace setCrossover: NECrossoverOperation name.
 					newInd addParent: ind1; addParent: ind2.
 					ind1 addChildren: newInd.
 					ind2 addChildren: newInd ]
@@ -320,7 +322,7 @@ NEAT >> runOneGeneration [
 					newInd addParent: i.
 					i addChildren: newInd ].
 
-			newTrace := NETraceItem new.
+			
 			self doMutate: newInd trace: newTrace.
 			newInd computeFitness: fitness trace: newTrace.
 			newInd trace: newTrace.
