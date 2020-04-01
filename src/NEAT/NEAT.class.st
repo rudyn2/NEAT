@@ -20,6 +20,50 @@ Class {
 	#category : #'NEAT-Core'
 }
 
+{ #category : #adding }
+NEAT >> addConnectionMutationResults: aPopulation [
+	| improved worse neutral trace notValid|
+	improved := 0.
+	worse := 0.
+	neutral := 0.
+	notValid := 0.
+	
+	aPopulation do: [ 
+		:ind | trace := ind trace.
+		((trace size > 1) and: [ (trace last operation notNil) and: [(trace last operation) == #NEAddConnectionMutationOperation]]) ifTrue: [ 
+			(trace last fitness > trace penultimate fitness) ifTrue: [ improved := improved + 1. ] ifFalse: [ 
+				(trace last fitness < trace penultimate fitness) ifTrue: [ worse := worse + 1. ] ifFalse: [ neutral := neutral + 1. ].
+		]] ifFalse: [ 
+		"if not valid then the individual is product of a crossover or it is from first generation or it isn't a connection weight operation"
+		notValid := notValid + 1.
+	 ]
+
+	].
+	^ Dictionary newFrom: { #improved -> improved. #worse -> worse. #neutral -> neutral. #notValid -> notValid }
+]
+
+{ #category : #'as yet unclassified' }
+NEAT >> addNodeMutationResults: aPopulation [
+	| improved worse neutral trace notValid|
+	improved := 0.
+	worse := 0.
+	neutral := 0.
+	notValid := 0.
+	
+	aPopulation do: [ 
+		:ind | trace := ind trace.
+		((trace size > 1) and: [ (trace last operation notNil) and: [(trace last operation) == #NEAddNodeMutationOperation]]) ifTrue: [ 
+			(trace last fitness > trace penultimate fitness) ifTrue: [ improved := improved + 1. ] ifFalse: [ 
+				(trace last fitness < trace penultimate fitness) ifTrue: [ worse := worse + 1. ] ifFalse: [ neutral := neutral + 1. ].
+		]] ifFalse: [ 
+		"if not valid then the individual is product of a crossover or it is from first generation or it isn't a connection weight operation"
+		notValid := notValid + 1.
+	 ]
+
+	].
+	^ Dictionary newFrom: { #improved -> improved. #worse -> worse. #neutral -> neutral. #notValid -> notValid }
+]
+
 { #category : #initialization }
 NEAT >> buildInitialPopulation [
 	population := OrderedCollection new.
@@ -36,6 +80,28 @@ NEAT >> buildInitialPopulation [
 { #category : #initialization }
 NEAT >> computeFitnesses [
 	population do: [ :i | i computeFitness: fitness ]
+]
+
+{ #category : #'as yet unclassified' }
+NEAT >> connectionWeightMutationResults: aPopulation [
+	| improved worse neutral trace notValid|
+	improved := 0.
+	worse := 0.
+	neutral := 0.
+	notValid := 0.
+	
+	aPopulation do: [ 
+		:ind | trace := ind trace.
+		((trace size > 1) and: [ (trace last operation notNil) and: [(trace last operation) == #NEConnectionWeightMutationOperation]]) ifTrue: [ 
+			(trace last fitness > trace penultimate fitness) ifTrue: [ improved := improved + 1. ] ifFalse: [ 
+				(trace last fitness < trace penultimate fitness) ifTrue: [ worse := worse + 1. ] ifFalse: [ neutral := neutral + 1. ].
+		]] ifFalse: [ 
+		"if not valid then the individual is product of a crossover or it is from first generation or it isn't a connection weight operation"
+		notValid := notValid + 1.
+	 ]
+
+	].
+	^ Dictionary newFrom: { #improved -> improved. #worse -> worse. #neutral -> neutral. #notValid -> notValid }
 ]
 
 { #category : #'as yet unclassified' }
@@ -77,6 +143,9 @@ NEAT >> doLog [
 	log maxFitness: (population collect: #fitness) max.
 	log averageFitness: ((population collect: #fitness) average asFloat round: 3).
 	log bestIndividual: self result.
+	log connectionWeightMutationResults: (self connectionWeightMutationResults: population).
+	log addConnectionMutationResults: (self addConnectionMutationResults: population).
+	log addNodeMutationResults: (self addNodeMutationResults: population).
 	logs add: log.
 ]
 
@@ -152,6 +221,14 @@ NEAT >> gtInspectorGenerationsIn: composite [
 	composite roassal2
 		title: 'Generations';
 		initializeView: [ 	self visualizeGenerations ]
+]
+
+{ #category : #'as yet unclassified' }
+NEAT >> gtInspectorMutationHistoryIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal2
+		title: 'Mutation History';
+		initializeView: [ 	self visualizeMutationHistory ]
 ]
 
 { #category : #ui }
@@ -424,6 +501,39 @@ NEAT >> visualizeGenerations [
 			Color gray}
 			using: #squared.
 	^ b
+]
+
+{ #category : #'as yet unclassified' }
+NEAT >> visualizeMutationHistory [
+	| g d |
+	g := RTGrapher new.
+	
+	d := RTData new.
+	d noDot; connectColor: Color red.
+	d points: self logs.
+	d label: 'Connection Weight'.
+	d y: [:m | m connectionWeightMutationResults at: #improved].
+	g add: d.
+	
+	d := RTData new.
+	d noDot; connectColor: Color blue.
+	d points: self logs.
+	d label: 'Add node'.
+	d y: [:m | m addNodeMutationResults at: #improved].
+	g add: d.
+	
+	d := RTData new.
+	d noDot; connectColor: Color green.
+	d points: self logs.
+	d label: 'Add connection'.
+	d y: [:m | m addConnectionMutationResults at: #improved].
+	g add: d.
+	
+	
+	g axisX title: 'Generation'; noDecimal.
+	g axisY title: '# Individuals improved by mutation operations'.
+	g legend addText: 'Mutation operations'.
+	^ g
 ]
 
 { #category : #ui }

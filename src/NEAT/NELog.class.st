@@ -7,10 +7,33 @@ Class {
 		'minFitness',
 		'maxFitness',
 		'averageFitness',
-		'bestIndividual'
+		'bestIndividual',
+		'connectionWeightMutationResults',
+		'addNodeMutationResults',
+		'connectionMutationResults'
 	],
 	#category : #'NEAT-Core'
 }
+
+{ #category : #adding }
+NELog >> addConnectionMutationResults [
+	^ connectionMutationResults
+]
+
+{ #category : #adding }
+NELog >> addConnectionMutationResults: aDictionary [
+	connectionMutationResults := aDictionary 
+]
+
+{ #category : #accessing }
+NELog >> addNodeMutationResults [
+	^ addNodeMutationResults 
+]
+
+{ #category : #accessing }
+NELog >> addNodeMutationResults: aDictionary [
+	addNodeMutationResults := aDictionary
+]
 
 { #category : #accessing }
 NELog >> averageFitness [
@@ -30,6 +53,16 @@ NELog >> bestIndividual [
 { #category : #accessing }
 NELog >> bestIndividual: anObject [
 	bestIndividual := anObject
+]
+
+{ #category : #accessing }
+NELog >> connectionWeightMutationResults [
+	^ connectionWeightMutationResults
+]
+
+{ #category : #accessing }
+NELog >> connectionWeightMutationResults: aDictionary [
+	connectionWeightMutationResults := aDictionary.
 ]
 
 { #category : #accessing }
