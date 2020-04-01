@@ -14,7 +14,7 @@ NEIndividualTest >> setUp [
 NEIndividualTest >> testAddNodeMutation [
 
 	| ind |
-	ind := NEIndividual new.
+	ind := NETraceableIndividual new.
 	ind seed: 42.
 	ind addInputNode; addInputNode; addInputNode.
 	ind addOutputNode.

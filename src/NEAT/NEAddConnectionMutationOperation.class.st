@@ -48,7 +48,6 @@ NEAddConnectionMutationOperation >> on: anIndividual [
 				makeEnabled;
 				innovationNumber: InnovationNumber.
 	anIndividual addConnection: c.
-	anIndividual trace: { self class name . c . newWeight }
 ]
 
 { #category : #'instance creation' }

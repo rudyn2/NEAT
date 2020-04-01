@@ -20,6 +20,50 @@ Class {
 	#category : #'NEAT-Core'
 }
 
+{ #category : #adding }
+NEAT >> addConnectionMutationResults: aPopulation [
+	| improved worse neutral trace notValid|
+	improved := 0.
+	worse := 0.
+	neutral := 0.
+	notValid := 0.
+	
+	aPopulation do: [ 
+		:ind | trace := ind trace.
+		((trace size > 1) and: [ (trace last operation notNil) and: [(trace last operation) == #NEAddConnectionMutationOperation]]) ifTrue: [ 
+			(trace last fitness > trace penultimate fitness) ifTrue: [ improved := improved + 1. ] ifFalse: [ 
+				(trace last fitness < trace penultimate fitness) ifTrue: [ worse := worse + 1. ] ifFalse: [ neutral := neutral + 1. ].
+		]] ifFalse: [ 
+		"if not valid then the individual is product of a crossover or it is from first generation or it isn't a connection weight operation"
+		notValid := notValid + 1.
+	 ]
+
+	].
+	^ Dictionary newFrom: { #improved -> improved. #worse -> worse. #neutral -> neutral. #notValid -> notValid }
+]
+
+{ #category : #'as yet unclassified' }
+NEAT >> addNodeMutationResults: aPopulation [
+	| improved worse neutral trace notValid|
+	improved := 0.
+	worse := 0.
+	neutral := 0.
+	notValid := 0.
+	
+	aPopulation do: [ 
+		:ind | trace := ind trace.
+		((trace size > 1) and: [ (trace last operation notNil) and: [(trace last operation) == #NEAddNodeMutationOperation]]) ifTrue: [ 
+			(trace last fitness > trace penultimate fitness) ifTrue: [ improved := improved + 1. ] ifFalse: [ 
+				(trace last fitness < trace penultimate fitness) ifTrue: [ worse := worse + 1. ] ifFalse: [ neutral := neutral + 1. ].
+		]] ifFalse: [ 
+		"if not valid then the individual is product of a crossover or it is from first generation or it isn't a connection weight operation"
+		notValid := notValid + 1.
+	 ]
+
+	].
+	^ Dictionary newFrom: { #improved -> improved. #worse -> worse. #neutral -> neutral. #notValid -> notValid }
+]
+
 { #category : #initialization }
 NEAT >> buildInitialPopulation [
 	population := OrderedCollection new.
@@ -36,6 +80,28 @@ NEAT >> buildInitialPopulation [
 { #category : #initialization }
 NEAT >> computeFitnesses [
 	population do: [ :i | i computeFitness: fitness ]
+]
+
+{ #category : #'as yet unclassified' }
+NEAT >> connectionWeightMutationResults: aPopulation [
+	| improved worse neutral trace notValid|
+	improved := 0.
+	worse := 0.
+	neutral := 0.
+	notValid := 0.
+	
+	aPopulation do: [ 
+		:ind | trace := ind trace.
+		((trace size > 1) and: [ (trace last operation notNil) and: [(trace last operation) == #NEConnectionWeightMutationOperation]]) ifTrue: [ 
+			(trace last fitness > trace penultimate fitness) ifTrue: [ improved := improved + 1. ] ifFalse: [ 
+				(trace last fitness < trace penultimate fitness) ifTrue: [ worse := worse + 1. ] ifFalse: [ neutral := neutral + 1. ].
+		]] ifFalse: [ 
+		"if not valid then the individual is product of a crossover or it is from first generation or it isn't a connection weight operation"
+		notValid := notValid + 1.
+	 ]
+
+	].
+	^ Dictionary newFrom: { #improved -> improved. #worse -> worse. #neutral -> neutral. #notValid -> notValid }
 ]
 
 { #category : #'as yet unclassified' }
@@ -77,6 +143,9 @@ NEAT >> doLog [
 	log maxFitness: (population collect: #fitness) max.
 	log averageFitness: ((population collect: #fitness) average asFloat round: 3).
 	log bestIndividual: self result.
+	log connectionWeightMutationResults: (self connectionWeightMutationResults: population).
+	log addConnectionMutationResults: (self addConnectionMutationResults: population).
+	log addNodeMutationResults: (self addNodeMutationResults: population).
 	logs add: log.
 ]
 
@@ -87,6 +156,15 @@ NEAT >> doMutate: newInd [
 			(cAssoc key isKindOf: NEAbstractMutationOperation) ifTrue: [
 				random next <= cAssoc value
 					ifTrue: [ cAssoc key random: random; performOn: newInd ] ] ]
+]
+
+{ #category : #'as yet unclassified' }
+NEAT >> doMutate: newInd trace: newTrace [
+	config
+		do: [ :cAssoc | 
+			(cAssoc key isKindOf: NEAbstractMutationOperation) ifTrue: [
+				random next <= cAssoc value
+					ifTrue: [ cAssoc key random: random; performOn: newInd trace: newTrace] ] ]
 ]
 
 { #category : #initialization }
@@ -145,6 +223,14 @@ NEAT >> gtInspectorGenerationsIn: composite [
 		initializeView: [ 	self visualizeGenerations ]
 ]
 
+{ #category : #'as yet unclassified' }
+NEAT >> gtInspectorMutationHistoryIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal2
+		title: 'Mutation History';
+		initializeView: [ 	self visualizeMutationHistory ]
+]
+
 { #category : #ui }
 NEAT >> gtInspectorNbOfSpeciesIn: composite [
 	<gtInspectorPresentationOrder: -10>
@@ -191,7 +277,7 @@ NEAT >> initialize [
 	logs := OrderedCollection new.
 	numberOfGenerations := 10.
 	
-	self individualClass: NEIndividual.
+	self individualClass: NETraceableIndividual.
 	
 	self speciationThreshold: 3.
 	self doUseElitism
@@ -287,7 +373,7 @@ NEAT >> runFor: nbGen [
 
 { #category : #'as yet unclassified' }
 NEAT >> runOneGeneration [
-	| newPopulation ind1 ind2 newInd numberOfIndividualToCreate |
+	| newPopulation ind1 ind2 newInd newTrace numberOfIndividualToCreate |
 	self doSpeciation.
 	newPopulation := OrderedCollection new.
 	numberOfIndividualToCreate := (shouldUseElitism and: [ self currentGeneration > 1 ]) 
@@ -296,11 +382,13 @@ NEAT >> runOneGeneration [
 	numberOfIndividualToCreate
 		timesRepeat: [ 
 			"The following lines use the crossover"
+			newTrace := NETraceItem new.
 			random next <= self crossoverRate
 				ifTrue: [
 					ind1 := self selectIndividual.
 					ind2 := self selectIndividual: ind1 species individuals.
 					newInd := self crossoverBetween: ind1 and: ind2.
+					newTrace setCrossover: NECrossoverOperation name.
 					newInd addParent: ind1; addParent: ind2.
 					ind1 addChildren: newInd.
 					ind2 addChildren: newInd ]
@@ -311,9 +399,12 @@ NEAT >> runOneGeneration [
 					newInd addParent: i.
 					i addChildren: newInd ].
 
-			self doMutate: newInd.
+			
+			self doMutate: newInd trace: newTrace.
+			newInd computeFitness: fitness trace: newTrace.
+			newInd trace: newTrace.
 			newPopulation add: newInd.
-			newInd computeFitness: fitness ].
+			].
 
 	population := newPopulation.
 	self doLog
@@ -410,6 +501,39 @@ NEAT >> visualizeGenerations [
 			Color gray}
 			using: #squared.
 	^ b
+]
+
+{ #category : #'as yet unclassified' }
+NEAT >> visualizeMutationHistory [
+	| g d |
+	g := RTGrapher new.
+	
+	d := RTData new.
+	d noDot; connectColor: Color red.
+	d points: self logs.
+	d label: 'Connection Weight'.
+	d y: [:m | m connectionWeightMutationResults at: #improved].
+	g add: d.
+	
+	d := RTData new.
+	d noDot; connectColor: Color blue.
+	d points: self logs.
+	d label: 'Add node'.
+	d y: [:m | m addNodeMutationResults at: #improved].
+	g add: d.
+	
+	d := RTData new.
+	d noDot; connectColor: Color green.
+	d points: self logs.
+	d label: 'Add connection'.
+	d y: [:m | m addConnectionMutationResults at: #improved].
+	g add: d.
+	
+	
+	g axisX title: 'Generation'; noDecimal.
+	g axisY title: '# Individuals improved by mutation operations'.
+	g legend addText: 'Mutation operations'.
+	^ g
 ]
 
 { #category : #ui }

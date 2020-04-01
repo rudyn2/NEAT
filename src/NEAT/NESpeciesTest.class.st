@@ -30,7 +30,7 @@ NESpeciesTest >> testBasicOnIndividuals [
 	individuals := OrderedCollection new.
 	
 	10 timesRepeat: [ 
-		i := NEIndividual new.
+		i := NETraceableIndividual new.
 		i random: r.
 		i addInputNode; addInputNode; addInputNode.
 		i addOutputNode.
@@ -39,9 +39,9 @@ NESpeciesTest >> testBasicOnIndividuals [
 		"For each individual we create 10 clones"
 		10 timesRepeat: [ 
 			i2 := i copy.
-			NEAddNodeMutationOperation new performOn: i2.
-			NEAddConnectionMutationOperation new performOn: i2.
-			NEAddConnectionMutationOperation new performOn: i2.
+			NEAddNodeMutationOperation new performOn: i2 trace: NETraceItem new.
+			NEAddConnectionMutationOperation new performOn: i2 trace: NETraceItem new.
+			NEAddConnectionMutationOperation new performOn: i2 trace: NETraceItem new.
 			individuals add: i2
 		].
 	].
@@ -62,7 +62,7 @@ NESpeciesTest >> testBasicOnIndividuals02 [
 	individuals := OrderedCollection new.
 	
 	10 timesRepeat: [ 
-		i := NEIndividual new.
+		i := NETraceableIndividual new.
 		i random: r.
 		i addInputNode; addInputNode; addInputNode.
 		i addOutputNode.
@@ -71,9 +71,9 @@ NESpeciesTest >> testBasicOnIndividuals02 [
 		"For each individual we create 20 clones"
 		20 timesRepeat: [ 
 			i2 := i copy.
-			NEAddNodeMutationOperation new performOn: i2.
+			NEAddNodeMutationOperation new performOn: i2 trace: NETraceItem new.
 			"NEAddNodeMutationOperation new performOn: i2."
-			r next > 0.5 ifTrue: [ NEAddConnectionMutationOperation new performOn: i2 ].
+			r next > 0.5 ifTrue: [ NEAddConnectionMutationOperation new performOn: i2 trace: NETraceItem new].
 			
 			"NEAddConnectionMutationOperation new performOn: i2."
 			individuals add: i2

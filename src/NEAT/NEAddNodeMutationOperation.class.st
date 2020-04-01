@@ -20,5 +20,4 @@ NEAddNodeMutationOperation >> on: anIndividual [
 	connection2 := NEConnection new in: anIndividual numberOfNodesWithBias; out: c out; weight: c weight; makeEnabled; innovationNumber: InnovationNumber.
 	anIndividual addConnection: connection2.
 		
-	anIndividual trace: { self class name . c . connection1 . connection2 }
 ]
