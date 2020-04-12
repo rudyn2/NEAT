@@ -46,5 +46,5 @@ NEAbstractMutationOperation >> random: anObject [
 
 { #category : #'instance creation' }
 NEAbstractMutationOperation >> randomWeight [
-	^ random next * 10 - 5
+	^ random next * 1000 - 5
 ]

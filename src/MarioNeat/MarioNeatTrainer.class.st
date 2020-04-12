@@ -12,30 +12,47 @@ MarioNeatTrainer >> beat: anIndividual game: aMaGame [
 	"This executes the evaluation of the game and updates the status 1 time."
 	| input gameInput |
 	
-	input := aMaGame getSimpleEntitiesMatrix. 
+	input := aMaGame getVisibleEntitiesAsFixedArray. 
 	gameInput := anIndividual evaluate: input.
 	aMaGame setBinaryInput: gameInput.
 	aMaGame update.
+]
+
+{ #category : #script }
+MarioNeatTrainer >> gameBeatExample [	
+	<script: 'self new gameBeatExample'>
+	"open transcript to see logs"
+	| game |
+	game := MaGame new.
+	game player position x traceCr.
+	game setBinaryInput: #(0 1 0 0 0).
+	10 timesRepeat: [  
+		game update.
+	 	].
+	10 timesRepeat: [ 
+		game player position x traceCr.
+	 	]
 ]
 
 { #category : #initialization }
 MarioNeatTrainer >> initialize [ 
 	neat := NEAT new.
 	neat for: NEConnectionWeightMutationOperation prob: 0.2.
-	neat for: NEAddConnectionMutationOperation prob: 0.2.
-	neat for: NEAddNodeMutationOperation prob: 0.01.
+	neat for: NEAddConnectionMutationOperation prob: 0.5.
+	neat for: NEAddNodeMutationOperation prob: 0.5.
+	neat for: NECrossoverOperation prob: 0.5
 	
 ]
 
 { #category : #script }
 MarioNeatTrainer >> trainMario: nBeats [
-	<script: '(self new trainMario: 10) inspect'>
-	|inputExample game|
+	<script: '(self new trainMario: 100) inspect'>
+	| game |
 
-	inputExample := MaGame new getSimpleEntitiesMatrix.
-	neat numberOfInputs: (inputExample size).
+	neat numberOfInputs: (MaGame new getVisibleEntitiesAsFixedArray size).
 	neat numberOfOutputs: 5.
-	neat populationSize: 10.
+	neat populationSize: 100.
+	neat numberOfGenerations: 30.
 
 	neat fitness: [ :ind |
 		game := MaGame new.
