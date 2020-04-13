@@ -2,7 +2,8 @@ Class {
 	#name : #MarioNeatTrainer,
 	#superclass : #Object,
 	#instVars : [
-		'neat'
+		'neat',
+		'numberOfGenerations'
 	],
 	#category : #MarioNeat
 }
@@ -40,13 +41,36 @@ MarioNeatTrainer >> initialize [
 	neat for: NEConnectionWeightMutationOperation prob: 0.2.
 	neat for: NEAddConnectionMutationOperation prob: 0.5.
 	neat for: NEAddNodeMutationOperation prob: 0.5.
-	neat for: NECrossoverOperation prob: 0.5
+	neat for: NECrossoverOperation prob: 0.5.
+	neat numberOfGenerations: 15.
 	
 ]
 
+{ #category : #accessing }
+MarioNeatTrainer >> numberOfGenerations: anInteger [
+	neat numberOfGenerations: anInteger.
+]
+
+{ #category : #running }
+MarioNeatTrainer >> playMario: aNEIndividual [
+
+	| game |
+	game := MaGame new.
+	game canvas open setLabel: 'Mario'.
+	game canvas newAnimation 
+		loops: 500;
+		duration: 24 milliSeconds;
+		onStepDo: [ :t | ];
+		when: RSAnimationLoopEvent do: [ :evt | 	
+			game setBinaryInput: (aNEIndividual evaluate: (game getVisibleEntitiesAsFixedArray)).
+			"game update. "
+			evt animation currentLoop traceCr.
+			]
+]
+
 { #category : #script }
-MarioNeatTrainer >> trainMario: nBeats [
-	<script: '(self new trainMario: 100) inspect'>
+MarioNeatTrainer >> trainMarios: nBeats [
+	<script: '(self new trainMarios: 500) inspect'>
 	| game |
 
 	neat numberOfInputs: (MaGame new getVisibleEntitiesAsFixedArray size).
@@ -62,4 +86,9 @@ MarioNeatTrainer >> trainMario: nBeats [
 
 	neat run.
 	^ neat.
+]
+
+{ #category : #'as yet unclassified' }
+MarioNeatTrainer >> winner [
+	^ neat result 
 ]
