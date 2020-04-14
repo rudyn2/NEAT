@@ -11,12 +11,10 @@ Class {
 { #category : #running }
 MarioNeatTrainer >> beat: anIndividual game: aMaGame [
 	"This executes the evaluation of the game and updates the status 1 time."
-	| input gameInput |
+	| input |
 	
 	input := aMaGame getVisibleEntitiesAsFixedArray. 
-	gameInput := anIndividual evaluate: input.
-	aMaGame setBinaryInput: gameInput.
-	aMaGame update.
+	aMaGame playBinaryInput: (anIndividual evaluate: input).
 ]
 
 { #category : #script }
@@ -75,7 +73,7 @@ MarioNeatTrainer >> trainMarios: nBeats [
 
 	neat numberOfInputs: (MaGame new getVisibleEntitiesAsFixedArray size).
 	neat numberOfOutputs: 5.
-	neat populationSize: 100.
+	neat populationSize: 50.
 	neat numberOfGenerations: 30.
 
 	neat fitness: [ :ind |

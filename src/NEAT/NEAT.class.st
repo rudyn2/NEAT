@@ -224,11 +224,19 @@ NEAT >> gtInspectorGenerationsIn: composite [
 ]
 
 { #category : #'as yet unclassified' }
+NEAT >> gtInspectorImprovedMutationHistoryIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal2
+		title: 'Improved Mutation History';
+		initializeView: [ 	self visualizeImprovedMutationHistory ]
+]
+
+{ #category : #'as yet unclassified' }
 NEAT >> gtInspectorMutationHistoryIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite roassal2
-		title: 'Mutation History';
-		initializeView: [ 	self visualizeMutationHistory ]
+		title: 'Improved Mutation History';
+		initializeView: [ 	self visualizeImprovedMutationHistory ]
 ]
 
 { #category : #ui }
@@ -253,6 +261,14 @@ NEAT >> gtInspectorViewIn: composite [
 	composite roassal2
 		title: 'Result history';
 		initializeView: [ 	self visualizeResultHistory ]
+]
+
+{ #category : #'as yet unclassified' }
+NEAT >> gtInspectorWorsenedMutationHistoryIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal2
+		title: 'Worsened Mutation History';
+		initializeView: [ 	self visualizeWorsenedMutationHistory ]
 ]
 
 { #category : #initialization }
@@ -504,6 +520,39 @@ NEAT >> visualizeGenerations [
 ]
 
 { #category : #'as yet unclassified' }
+NEAT >> visualizeImprovedMutationHistory [
+	| g d |
+	g := RTGrapher new.
+	
+	d := RTData new.
+	d noDot; connectColor: Color red.
+	d points: self logs.
+	d label: 'Connection Weight'.
+	d y: [:m | m connectionWeightMutationResults at: #improved].
+	g add: d.
+	
+	d := RTData new.
+	d noDot; connectColor: Color blue.
+	d points: self logs.
+	d label: 'Add node'.
+	d y: [:m | m addNodeMutationResults at: #improved].
+	g add: d.
+	
+	d := RTData new.
+	d noDot; connectColor: Color green.
+	d points: self logs.
+	d label: 'Add connection'.
+	d y: [:m | m addConnectionMutationResults at: #improved].
+	g add: d.
+	
+	
+	g axisX title: 'Generation'; noDecimal.
+	g axisY title: '# Improved Individuals'.
+	g legend addText: 'Mutation operations'.
+	^ g
+]
+
+{ #category : #'as yet unclassified' }
 NEAT >> visualizeMutationHistory [
 	| g d |
 	g := RTGrapher new.
@@ -587,4 +636,37 @@ NEAT >> visualizeSpeciesEvolution [
 		objects: allSpecies;
 		normalizeColor: #maxFitness.
 	^ b
+]
+
+{ #category : #'as yet unclassified' }
+NEAT >> visualizeWorsenedMutationHistory [
+	| g d |
+	g := RTGrapher new.
+	
+	d := RTData new.
+	d noDot; connectColor: Color red.
+	d points: self logs.
+	d label: 'Connection Weight'.
+	d y: [:m | m connectionWeightMutationResults at: #worse].
+	g add: d.
+	
+	d := RTData new.
+	d noDot; connectColor: Color blue.
+	d points: self logs.
+	d label: 'Add node'.
+	d y: [:m | m addNodeMutationResults at: #worse].
+	g add: d.
+	
+	d := RTData new.
+	d noDot; connectColor: Color green.
+	d points: self logs.
+	d label: 'Add connection'.
+	d y: [:m | m addConnectionMutationResults at: #worse].
+	g add: d.
+	
+	
+	g axisX title: 'Generation'; noDecimal.
+	g axisY title: '# Worsened individuals'.
+	g legend addText: 'Mutation operations'.
+	^ g
 ]
