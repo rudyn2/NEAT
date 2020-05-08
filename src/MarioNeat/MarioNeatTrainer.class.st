@@ -68,13 +68,13 @@ MarioNeatTrainer >> playMario: aNEIndividual [
 
 { #category : #script }
 MarioNeatTrainer >> trainMarios: nBeats [
-	<script: '(self new trainMarios: 500) inspect'>
+	<script: '(self new trainMarios: 200) inspect'>
 	| game |
 
 	neat numberOfInputs: (MaGame new getVisibleEntitiesAsFixedArray size).
 	neat numberOfOutputs: 5.
 	neat populationSize: 50.
-	neat numberOfGenerations: 30.
+	neat numberOfGenerations: 10.
 
 	neat fitness: [ :ind |
 		game := MaGame new.
